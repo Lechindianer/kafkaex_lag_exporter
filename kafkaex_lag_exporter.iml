@@ -13,7 +13,14 @@
       <excludeFolder url="file://$MODULE_DIR$/deps" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/varint" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/kayrock" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/crc32cer" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/connection" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/kafka_ex" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/brod" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="kafka_ex" level="project" />
   </component>
 </module>
