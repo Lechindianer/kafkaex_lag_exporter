@@ -71,3 +71,18 @@ services:
       - zookeeper
     networks:
       - kafka-cluster
+
+  kowl:
+    image: quay.io/cloudhut/kowl:v1.4.0
+    container_name: kowl
+    restart: on-failure
+    hostname: kowl
+    volumes:
+    - ./config.yaml:/etc/kowl/config.yaml
+    ports:
+    - "8081:8080"
+    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+    depends_on:
+      - kafka1
+    networks:
+      - kafka-cluster
