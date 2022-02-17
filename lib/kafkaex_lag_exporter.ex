@@ -1,18 +1,27 @@
 defmodule KafkaexLagExporter do
-  @moduledoc """
-  Documentation for `KafkaexLagExporter`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
+  def start(_type, _args) do
+    import Supervisor.Spec
 
-  ## Examples
+    consumer_group_opts = [
+      # setting for the ConsumerGroup
+      heartbeat_interval: 1_000,
+      # this setting will be forwarded to the GenConsumer
+      commit_interval: 1_000
+    ]
 
-      iex> KafkaexLagExporter.hello()
-      :world
+    gen_consumer_impl = ConsumerOffsetsGenConsumer
+    consumer_group_name = "offsets_group"
+    topic_names = ["__consumer_offsets"]
 
-  """
-  def hello do
-    :world
+    children = [
+      supervisor(
+        KafkaEx.ConsumerGroup,
+        [gen_consumer_impl, consumer_group_name, topic_names, consumer_group_opts]
+      )
+    ]
+
+    Supervisor.start_link(children, strategy: :one_for_one)
   end
 end
