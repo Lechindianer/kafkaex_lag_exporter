@@ -71,6 +71,10 @@ config :kafka_ex,
          # use "kayrock" for the new client
        kafka_version: "3.1.0"
 
+config :logger,
+       level: :info,
+       truncate: 4096
+
 env_config = Path.expand("#{Mix.env()}.exs", __DIR__)
 
 if File.exists?(env_config) do
