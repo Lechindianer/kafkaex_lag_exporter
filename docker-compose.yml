@@ -17,6 +17,8 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
       - kafka-cluster
+    tmpfs:
+      - "/datalog"
       
   kafka1:
     image: bitnami/kafka:3.1.0
