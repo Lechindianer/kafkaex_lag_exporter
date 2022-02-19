@@ -1,4 +1,9 @@
 defmodule KafkaexLagExporter do
+
+  @moduledoc """
+  Supervisor to start the '__consumer__offsets' watcher child
+  """
+
   use Application
 
   def start(_type, _args) do

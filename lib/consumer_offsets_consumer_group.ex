@@ -1,4 +1,9 @@
 defmodule ConsumerOffsetsGenConsumer do
+
+  @moduledoc """
+  Genserver implementation to consume new messages on topic '__consumer_offsets'
+  """
+
   use KafkaEx.GenConsumer
 
   alias KafkaEx.Protocol.Fetch.Message
