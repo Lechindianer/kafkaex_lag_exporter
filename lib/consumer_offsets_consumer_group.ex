@@ -7,9 +7,9 @@ defmodule ConsumerOffsetsGenConsumer do
 
   def handle_message_set(message_set, state) do
     for %Message{key: key, offset: offset} <- message_set do
-      Logger.info(fn -> "offset: " <> inspect(offset) end)
-
       consumer_group = get_consumer_group(key)
+
+      Logger.info("consumer_group '#{consumer_group}' has offset '#{offset}'}")
     end
 
     {:async_commit, state}
