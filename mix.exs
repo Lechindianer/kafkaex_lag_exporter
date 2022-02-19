@@ -22,6 +22,7 @@ defmodule KafkaexLagExporter.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:kafka_ex, "~> 0.12.1"},
     ]
   end
