@@ -11,3 +11,27 @@ sast:
   stage: test
 include:
 - template: Security/SAST.gitlab-ci.yml
+
+.elixir: &elixir
+  image: elixir:1.13
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only $MIX_ENV
+
+lint:elixir:
+  extends: .elixir
+  stage: test
+  variables:
+    MIX_ENV: test
+  script:
+    - mix compile --warnings-as-errors --force
+    - mix format --check-formatted
+
+test:elixir:
+  extends: .elixir
+  stage: test
+  variables:
+    MIX_ENV: test
+  script:
+    - mix test
