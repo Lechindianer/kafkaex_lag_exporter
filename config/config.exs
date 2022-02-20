@@ -41,7 +41,6 @@ config :kafka_ex,
   #         {"kafka2", 9092},
   #         {"kafka3", 9092}
   #       ],
-  brokers: "localhost:9093,localhost:9094,localhost:9095",
   #
   # OR:
   # brokers: "localhost:9092,localhost:9093,localhost:9094"
@@ -96,4 +95,8 @@ config :kafka_ex,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{config_env()}.exs"
+env_config = Path.expand("#{Mix.env()}.exs", __DIR__)
+
+if File.exists?(env_config) do
+  import_config(env_config)
+end
