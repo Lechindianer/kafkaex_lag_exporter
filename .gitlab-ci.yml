@@ -34,4 +34,4 @@ test:elixir:
   variables:
     MIX_ENV: test
   script:
-    - mix test
+    - mix test --no-start
