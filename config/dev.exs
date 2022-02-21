@@ -49,6 +49,3 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
-
-config :kafka_ex,
-  brokers: "localhost:9093,localhost:9094,localhost:9095"
