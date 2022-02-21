@@ -49,9 +49,3 @@ config :logger, level: :info
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
-config :kafka_ex,
-  brokers: [
-    {System.get_env("KAFKA_BROKER_1_HOST"), System.get_env("KAFKA_BROKER_1_PORT")},
-    {System.get_env("KAFKA_BROKER_2_HOST"), System.get_env("KAFKA_BROKER_2_PORT")},
-    {System.get_env("KAFKA_BROKER_3_HOST"), System.get_env("KAFKA_BROKER_3_PORT")}
-  ]
