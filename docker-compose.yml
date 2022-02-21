@@ -88,3 +88,21 @@ services:
       - kafka1
     networks:
       - kafka-cluster
+
+  kafka-lag-exporter:
+    build: .
+    container_name: kafka-lag-exporter
+    ports:
+      - '4000:4000'
+    environment:
+      - KAFKA_BROKER1_HOST=kafka1
+      - KAFKA_BROKER2_HOST=kafka2
+      - KAFKA_BROKER3_HOST=kafka2
+      - KAFKA_BROKER_PORT=9092
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    restart: "unless-stopped"
+    networks:
+      - kafka-cluster
