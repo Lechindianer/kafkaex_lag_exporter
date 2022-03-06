@@ -38,13 +38,17 @@ if config_env() == :prod do
   # See `mix help release` for more information.
 end
 
-{port, _} =
-  System.fetch_env!("KAFKA_BROKER_PORT")
-  |> Integer.parse()
+brokers =
+  System.fetch_env!("KAFKA_BROKERS")
+  |> String.split(",")
+  |> Enum.map(fn x ->
+    [host, port] = String.split(x, ":")
+    {host, String.to_integer(port)}
+  end)
 
-config :kafka_ex,
-  brokers: [
-    {System.fetch_env!("KAFKA_BROKER1_HOST"), port},
-    {System.fetch_env!("KAFKA_BROKER2_HOST"), port},
-    {System.fetch_env!("KAFKA_BROKER3_HOST"), port}
+config :brod,
+  clients: [
+    kafka_client: [
+      endpoints: brokers
+    ]
   ]

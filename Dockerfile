@@ -14,12 +14,10 @@
 #
 ARG DOCKER_IMAGE="hexpm/elixir:1.13.3-erlang-23.2.3-alpine-3.15.0"
 
-
-
 FROM ${DOCKER_IMAGE} as builder
 
 # install build dependencies
-RUN apk add gcc git librdkafka-dev musl-dev
+RUN apk add g++
 
 # prepare build dir
 WORKDIR /app

@@ -7,17 +7,6 @@ defmodule KafkaexLagExporter.Application do
 
   @impl true
   def start(_type, _args) do
-    consumer_group_opts = [
-      # setting for the ConsumerGroup
-      heartbeat_interval: 1_000,
-      # this setting will be forwarded to the GenConsumer
-      commit_interval: 1_000
-    ]
-
-    gen_consumer_impl = KafkaexLagExporter.ConsumerOffsetsGenConsumer
-    consumer_group_name = "offsets_group"
-    topic_names = ["__consumer_offsets"]
-
     children = [
       KafkaexLagExporter.PromEx,
       # Start the Telemetry supervisor
@@ -26,14 +15,7 @@ defmodule KafkaexLagExporter.Application do
       {Phoenix.PubSub, name: KafkaexLagExporter.PubSub},
       # Start the Endpoint (http/https)
       KafkaexLagExporterWeb.Endpoint,
-      # Start a worker by calling: KafkaexLagExporter.Worker.start_link(arg)
-      # {KafkaexLagExporter.Worker, arg}
-      %{
-        id: KafkaEx.ConsumerGroup,
-        start:
-          {KafkaEx.ConsumerGroup, :start_link,
-           [gen_consumer_impl, consumer_group_name, topic_names, consumer_group_opts]}
-      }
+      KafkaexLagExporter.ConsumerOffsetFetcher
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

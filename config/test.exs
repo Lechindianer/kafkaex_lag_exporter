@@ -13,10 +13,4 @@ config :logger, level: :warn
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :kafka_ex,
-  disable_default_worker: true
-
-System.put_env("KAFKA_BROKER1_HOST", "localhost")
-System.put_env("KAFKA_BROKER2_HOST", "localhost")
-System.put_env("KAFKA_BROKER3_HOST", "localhost")
-System.put_env("KAFKA_BROKER_PORT", "9092")
+System.put_env("KAFKA_BROKERS", "test-host:9092")
