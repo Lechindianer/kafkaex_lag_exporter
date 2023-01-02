@@ -1,93 +1,91 @@
-# https://blog.exxeta.com/en/2021/05/20/kafka-cluster-setup-with-docker-and-docker-compose/
+# https://github.com/redpanda-data/documentation/blob/131f7de1593072488b81a4a59f89e2111bdc71fd/docs/platform/console/reference/docker-compose.mdx
 
-version: "3"
- 
-networks:
-  kafka-cluster:
-    name: kafka-cluster
-    driver: bridge
- 
+version: '3.7'
+
 services:
-  zookeeper:
-    image: bitnami/zookeeper:3.7.0
-    container_name: zookeeper
+  redpanda:
+    image: docker.redpanda.com/vectorized/redpanda:v22.3.8
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
     ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - kafka-cluster
-    tmpfs:
-      - "/datalog"
-      
-  kafka1:
-    image: bitnami/kafka:3.1.0
-    container_name: kafka1
-    ports:
-      - '9093:9093'
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka1:9092,EXTERNAL://localhost:9093
-      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    depends_on:
-      - zookeeper
-    networks:
-      - kafka-cluster
-      
-  kafka2:
-    image: bitnami/kafka:3.1.0
-    container_name: kafka2
-    ports:
-      - '9094:9094'
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka2:9092,EXTERNAL://localhost:9094
-      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    depends_on:
-      - zookeeper
-    networks:
-      - kafka-cluster
-      
-  kafka3:
-    image: bitnami/kafka:3.1.0
-    container_name: kafka3
-    ports:
-      - '9095:9095'
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9095
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka3:9092,EXTERNAL://localhost:9095
-      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    depends_on:
-      - zookeeper
-    networks:
-      - kafka-cluster
+      - 8081:8081
+      - 8082:8082
+      - 9092:9092
+      - 9644:9644
+      - 29092:29092
 
-  kowl:
-    image: quay.io/cloudhut/kowl:v1.4.0
-    container_name: kowl
-    restart: on-failure
-    hostname: kowl
-    volumes:
-    - ./config.yaml:/etc/kowl/config.yaml
+  console:
+    image: docker.redpanda.com/vectorized/console:v2.1.1
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:29092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+        connect:
+          enabled: true
+          clusters:
+            - name: local-connect-cluster
+              url: http://connect:8083
     ports:
-    - "8080:8080"
-    entrypoint: ./kowl --config.filepath=/etc/kowl/config.yaml
+      - 8080:8080
     depends_on:
-      - kafka1
-    networks:
-      - kafka-cluster
+      - redpanda
+
+  # Owl Shop is an application that simulates an ecommerce shop that uses Kafka.
+  # It is part of this docker compose so that you have some sample data that you can
+  # browse with Console.
+  owl-shop:
+    image: quay.io/cloudhut/owl-shop:latest
+    environment:
+      - SHOP_KAFKA_BROKERS=redpanda:29092
+      - SHOP_KAFKA_TOPICREPLICATIONFACTOR=1
+      - SHOP_TRAFFIC_INTERVAL_RATE=1
+      - SHOP_TRAFFIC_INTERVAL_DURATION=0.1s
+    depends_on:
+      - redpanda
+
+  connect:
+    image: docker.redpanda.com/vectorized/connectors:1.0.0-dev-dff1c57
+    hostname: connect
+    container_name: connect
+    depends_on:
+      - redpanda
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_CONFIGURATION: |
+          key.converter=org.apache.kafka.connect.converters.ByteArrayConverter
+          value.converter=org.apache.kafka.connect.converters.ByteArrayConverter
+          group.id=connectors-cluster
+          offset.storage.topic=_internal_connectors_offsets
+          config.storage.topic=_internal_connectors_configs
+          status.storage.topic=_internal_connectors_status
+          config.storage.replication.factor=-1
+          offset.storage.replication.factor=-1
+          status.storage.replication.factor=-1
+          offset.flush.interval.ms=1000
+          producer.linger.ms=50
+          producer.batch.size=131072
+      CONNECT_BOOTSTRAP_SERVERS: redpanda:29092
+      CONNECT_GC_LOG_ENABLED: "false"
+      CONNECT_HEAP_OPTS: -Xms512M -Xmx512M
+      CONNECT_LOG_LEVEL: info
 
   kafka-lag-exporter:
     build: .
@@ -95,11 +93,7 @@ services:
     ports:
       - '4000:4000'
     environment:
-      - KAFKA_BROKERS=kafka1:9092,kafka2:9092,kafka3:9092
+      - KAFKA_BROKERS=redpanda:29092
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
+      - redpanda
     restart: "unless-stopped"
-    networks:
-      - kafka-cluster
