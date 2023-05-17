@@ -12,7 +12,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.13.3-erlang-23.2.3-debian-bullseye-20210902-slim
 #
-ARG DOCKER_IMAGE="hexpm/elixir:1.13.3-erlang-23.2.3-alpine-3.15.0"
+ARG DOCKER_IMAGE="hexpm/elixir:1.14.4-erlang-24.3.1-alpine-3.18.0"
 
 FROM ${DOCKER_IMAGE} as builder
 
