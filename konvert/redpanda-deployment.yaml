@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: redpanda
+  name: redpanda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redpanda
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        io.kompose.network/redpanda-owl-shop-redpanda-network: "true"
+        io.kompose.service: redpanda
+    spec:
+      containers:
+        - args:
+            - redpanda start
+            - --smp 1
+            - --overprovisioned
+            - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+            - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+            - --pandaproxy-addr 0.0.0.0:8082
+            - --advertise-pandaproxy-addr localhost:8082
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
+          name: redpanda
+          ports:
+            - containerPort: 8081
+            - containerPort: 8082
+            - containerPort: 9092
+            - containerPort: 9644
+            - containerPort: 29092
+          volumeMounts:
+            - mountPath: /var/lib/redpanda/data
+              name: redpanda
+      restartPolicy: Always
+      volumes:
+        - name: redpanda
+          persistentVolumeClaim:
+            claimName: redpanda

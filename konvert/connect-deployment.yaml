@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: connect
+  name: connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: connect
+  template:
+    metadata:
+      labels:
+        io.kompose.network/redpanda-owl-shop-redpanda-network: "true"
+        io.kompose.service: connect
+    spec:
+      containers:
+        - env:
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: redpanda:29092
+            - name: CONNECT_CONFIGURATION
+              value: |
+                key.converter=org.apache.kafka.connect.converters.ByteArrayConverter
+                value.converter=org.apache.kafka.connect.converters.ByteArrayConverter
+                group.id=connectors-cluster
+                offset.storage.topic=_internal_connectors_offsets
+                config.storage.topic=_internal_connectors_configs
+                status.storage.topic=_internal_connectors_status
+                config.storage.replication.factor=-1
+                offset.storage.replication.factor=-1
+                status.storage.replication.factor=-1
+                offset.flush.interval.ms=1000
+                producer.linger.ms=50
+                producer.batch.size=131072
+            - name: CONNECT_GC_LOG_ENABLED
+              value: "false"
+            - name: CONNECT_HEAP_OPTS
+              value: -Xms512M -Xmx512M
+            - name: CONNECT_LOG_LEVEL
+              value: info
+          image: docker.redpanda.com/redpandadata/connectors:latest
+          name: connect
+          ports:
+            - containerPort: 8083
+      hostname: connect
+      restartPolicy: Always

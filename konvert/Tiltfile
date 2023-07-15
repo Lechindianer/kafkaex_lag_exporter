@@ -1,0 +1,19 @@
+k8s_yaml('./redpanda-owl-shop-default-networkpolicy.yaml')
+k8s_yaml('./redpanda-persistentvolumeclaim.yaml')
+k8s_yaml('./redpanda-deployment.yaml')
+k8s_yaml('./redpanda-owl-shop-redpanda-network-networkpolicy.yaml')
+k8s_yaml('./redpanda-service.yaml')
+
+k8s_yaml('./connect-service.yaml')
+k8s_yaml('./connect-deployment.yaml')
+
+k8s_yaml('./owl-shop-deployment.yaml')
+
+k8s_yaml('./console-deployment.yaml')
+k8s_yaml('./console-service.yaml')
+k8s_yaml('./console-ingress.yaml')
+
+docker_build('kafka-lag-exporter', './..')
+
+k8s_yaml('./kafka-lag-exporter-deployment.yaml')
+k8s_yaml('./kafka-lag-exporter-service.yaml')

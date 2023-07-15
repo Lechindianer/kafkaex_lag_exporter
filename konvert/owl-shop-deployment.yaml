@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: owl-shop
+  name: owl-shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: owl-shop
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.network/redpanda-owl-shop-redpanda-network: "true"
+        io.kompose.service: owl-shop
+    spec:
+      containers:
+        - env:
+            - name: SHOP_KAFKA_BROKERS
+              value: redpanda:29092
+            - name: SHOP_KAFKA_TOPICREPLICATIONFACTOR
+              value: "1"
+            - name: SHOP_TRAFFIC_INTERVAL_DURATION
+              value: 0.1s
+            - name: SHOP_TRAFFIC_INTERVAL_RATE
+              value: "6"
+          image: quay.io/cloudhut/owl-shop:latest
+          name: owl-shop
+      restartPolicy: Always
