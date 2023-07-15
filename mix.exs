@@ -39,7 +39,7 @@ defmodule KafkaexLagExporter.MixProject do
       {:plug_cowboy, "~> 2.6.1"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:brod, "~> 3.16.1"},
+      {:brod, git: "https://github.com/kafka4beam/brod", ref: "0582dbbe1a619f8356caeb7a4c03e92650ac69ac"},
       {:prom_ex, "~> 1.8.0"}
     ]
   end

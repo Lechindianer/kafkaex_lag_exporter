@@ -8,16 +8,21 @@
 # This file is based on these images:
 #
 #   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20210902-slim - for the release image
+#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20230612-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.13.3-erlang-23.2.3-debian-bullseye-20210902-slim
+#   - Ex: hexpm/elixir:1.15.2-erlang-26.0.2-debian-bullseye-20230612-slim
 #
-ARG DOCKER_IMAGE="hexpm/elixir:1.14.4-erlang-24.3.1-alpine-3.18.0"
+ARG ELIXIR_VERSION=1.15.2
+ARG OTP_VERSION=26.0.2
+ARG ALPINE_VERSION=3.18.2
 
-FROM ${DOCKER_IMAGE} as builder
+ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-alpine-${ALPINE_VERSION}"
+ARG RUNNER_IMAGE="alpine:${ALPINE_VERSION}"
+
+FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apk add g++
+RUN apk add g++ git
 
 # prepare build dir
 WORKDIR /app
@@ -31,7 +36,6 @@ ENV MIX_ENV="prod"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
-
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
@@ -41,9 +45,9 @@ RUN mkdir config
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
-# Compile the release
 COPY lib lib
 
+# Compile the release
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
@@ -54,20 +58,27 @@ RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
-FROM ${DOCKER_IMAGE}
+FROM ${RUNNER_IMAGE}
+
+#RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
+#  && apt-get clean && rm -f /var/lib/apt/lists/*_*
+RUN apk add g++ ncurses
 
 # Set the locale
 #RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
-#ENV LANG en_US.UTF-8
-#ENV LANGUAGE en_US:en
-#ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
 RUN chown nobody /app
 
+# set runner ENV
+ENV MIX_ENV="prod"
+
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/prod/rel/kafkaex_lag_exporter ./
+COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/kafkaex_lag_exporter ./
 
 USER nobody
 
