@@ -1,15 +1,21 @@
-# https://github.com/redpanda-data/documentation/blob/131f7de1593072488b81a4a59f89e2111bdc71fd/docs/platform/console/reference/docker-compose.mdx
+# https://docs.redpanda.com/docs/reference/docker-compose/
+#
+# https://github.com/redpanda-data/documentation/blob/ee83c7d99a4075c0b9ca40b9647a3a51555212f4/docs/reference/docker-compose.mdx
 
 version: '3.7'
-
+name: redpanda-owl-shop
+networks:
+  redpanda_network:
+    driver: bridge
+volumes:
+  redpanda: null
 services:
   redpanda:
-    image: docker.redpanda.com/vectorized/redpanda:v22.3.8
+    image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
     command:
       - redpanda start
       - --smp 1
       - --overprovisioned
-      - --node-id 0
       - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
       - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
       - --pandaproxy-addr 0.0.0.0:8082
@@ -20,9 +26,13 @@ services:
       - 9092:9092
       - 9644:9644
       - 29092:29092
+    volumes:
+      - redpanda:/var/lib/redpanda/data
+    networks:
+      - redpanda_network
 
   console:
-    image: docker.redpanda.com/vectorized/console:v2.1.1
+    image: docker.redpanda.com/redpandadata/console:v2.2.4
     entrypoint: /bin/sh
     command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     environment:
@@ -44,14 +54,16 @@ services:
               url: http://connect:8083
     ports:
       - 8080:8080
+    networks:
+      - redpanda_network
     depends_on:
       - redpanda
 
-  # Owl Shop is an application that simulates an ecommerce shop that uses Kafka.
-  # It is part of this docker compose so that you have some sample data that you can
-  # browse with Console.
   owl-shop:
     image: quay.io/cloudhut/owl-shop:latest
+    networks:
+      - redpanda_network
+    #platform: 'linux/amd64'
     environment:
       - SHOP_KAFKA_BROKERS=redpanda:29092
       - SHOP_KAFKA_TOPICREPLICATIONFACTOR=1
@@ -61,9 +73,12 @@ services:
       - redpanda
 
   connect:
-    image: docker.redpanda.com/vectorized/connectors:1.0.0-dev-dff1c57
+    image: docker.redpanda.com/redpandadata/connectors:latest
     hostname: connect
     container_name: connect
+    networks:
+      - redpanda_network
+    #platform: 'linux/amd64'
     depends_on:
       - redpanda
     ports:
