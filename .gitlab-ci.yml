@@ -11,6 +11,9 @@ variables:
   OTP_VERSION: 26.0.2
   ALPINE_VERSION: 3.18.2
 
+before_script:
+  - apk add git
+
 stages:
 - test
 sast:
