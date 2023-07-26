@@ -49,3 +49,21 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :brod,
+  clients: [
+    client1: [
+      # non ssl
+      endpoints: [redpanda: 29092],
+      # endpoints: [localhost: 9093], # ssl
+      # for safety, default true
+      allow_topic_auto_creation: false,
+      # get_metadata_timeout_seconds: 5, # default 5
+      # max_metadata_sock_retry: 2, # seems obsolete
+      max_metadata_sock_retry: 5,
+      # query_api_versions: false, # default true, set false for Kafka < 0.10
+      # reconnect_cool_down_seconds: 1, # default 1
+      # default 5
+      restart_delay_seconds: 10
+    ]
+  ]

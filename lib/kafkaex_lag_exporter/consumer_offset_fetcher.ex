@@ -1,7 +1,5 @@
 defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
-  @moduledoc """
-  Genserver implementation to consume new messages on topic '__consumer_offsets'
-  """
+  @moduledoc "Genserver implementation to calculate summarized lag for each consumer group"
 
   use GenServer
 
@@ -28,21 +26,52 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
 
   @impl true
   def handle_info(:tick, state) do
-    consumer_groups = :brod.list_all_groups(state.endpoints, [])
+    [endpoint | _] = state.endpoints || [{"redpanda", 29_092}]
 
-    Enum.each(consumer_groups, fn {broker_info, group_name} ->
-      describe_group(broker_info, group_name)
-    end)
+    consumer_group_names = get_consumer_group_names(endpoint)
+
+    consumer_lags =
+      :brod.describe_groups(endpoint, [], consumer_group_names)
+      |> get_consumer_lags
+
+    Logger.info("Consumer lags: #{inspect(consumer_lags)}")
 
     Process.send_after(self(), :tick, @interval)
 
     {:noreply, state}
   end
 
-  defp describe_group(_, []), do: nil
+  defp get_consumer_group_names({host, port}) do
+    [{_, groups} | _] = :brod.list_all_groups([{host, port}], [])
 
-  defp describe_group(broker_info, group_name) do
-    Logger.info("Getting info for group name: #{group_name}")
-    :brod.describe_groups(broker_info, [], group_name)
+    groups
+    |> Enum.filter(fn {_, _, protocol} -> protocol == "consumer" end)
+    |> Enum.map(fn {_, group_name, "consumer"} -> group_name end)
+  end
+
+  defp get_consumer_lags({:ok, group_descriptions}) do
+    group_descriptions
+    |> Enum.map(fn %{group_id: consumer_group, members: members} ->
+      [consumer_group, members]
+    end)
+    |> Enum.map(fn [consumer_group, members] -> [consumer_group, get_topic_names(members)] end)
+    |> Enum.map(fn [consumer_group, topics] ->
+      [consumer_group, get_lag_for_consumer(consumer_group, topics)]
+    end)
+  end
+
+  defp get_consumer_lags({_, _}), do: []
+
+  defp get_topic_names(members) do
+    Enum.flat_map(members, fn member ->
+      KafkaexLagExporter.TopicNameParser.parse_topic_names(member.member_assignment)
+    end)
+  end
+
+  defp get_lag_for_consumer(consumer_group, topics) do
+    topics
+    |> Enum.reduce(0, fn topic, acc ->
+      acc + KafkaexLagExporter.KafkaUtils.lag_total(topic, consumer_group, :client1)
+    end)
   end
 end
