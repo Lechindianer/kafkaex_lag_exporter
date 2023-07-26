@@ -21,7 +21,7 @@ include:
 .elixir: &elixir
   image: 'hexpm/elixir:$ELIXIR_VERSION-erlang-$OTP_VERSION-alpine-$ALPINE_VERSION'
   before_script:
-    - apk add git
+    - apk add g++ git
     - mix local.hex --force
     - mix local.rebar --force
     - mix deps.get --only $MIX_ENV
