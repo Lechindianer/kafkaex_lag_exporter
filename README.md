@@ -30,7 +30,7 @@ Kowl is served at [localhost:8080](localhost:8080).
 ### Tests
 
 ```bash
-MIX_ENV=test mix test --no-test 
+MIX_ENV=test mix test --no-start 
 
 # Don't forget to check credo for code violations:
 mix credo
