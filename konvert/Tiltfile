@@ -17,3 +17,5 @@ docker_build('kafka-lag-exporter', './..')
 
 k8s_yaml('./kafka-lag-exporter-deployment.yaml')
 k8s_yaml('./kafka-lag-exporter-service.yaml')
+
+k8s_resource(workload='kafka-lag-exporter', port_forwards=4000)
