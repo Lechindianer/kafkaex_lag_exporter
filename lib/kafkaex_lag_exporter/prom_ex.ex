@@ -61,7 +61,7 @@ defmodule KafkaexLagExporter.PromEx do
     [
       # PromEx built in plugins
       Plugins.Application,
-      Plugins.Beam
+      Plugins.Beam,
       # {Plugins.Phoenix, router: KafkaexLagExporterWeb.Router, endpoint: KafkaexLagExporterWeb.Endpoint},
       # Plugins.Ecto,
       # Plugins.Oban,
@@ -70,7 +70,7 @@ defmodule KafkaexLagExporter.PromEx do
       # Plugins.Broadway,
 
       # Add your own PromEx metrics plugins
-      # KafkaexLagExporter.Users.PromExPlugin
+      KafkaexLagExporter.Metrics
     ]
   end
 end

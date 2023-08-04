@@ -8,7 +8,7 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
   @interval 5_000
 
   def start_link(default) when is_list(default) do
-    GenServer.start_link(__MODULE__, default)
+    GenServer.start_link(__MODULE__, default, name: __MODULE__)
   end
 
   @impl true
@@ -34,7 +34,7 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
       :brod.describe_groups(endpoint, [], consumer_group_names)
       |> get_consumer_lags
 
-    Logger.info("Consumer lags: #{inspect(consumer_lags)}")
+    KafkaexLagExporter.Metrics.kafka_metrics(endpoint, consumer_lags)
 
     Process.send_after(self(), :tick, @interval)
 
@@ -57,6 +57,9 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
     |> Enum.map(fn [consumer_group, members] -> [consumer_group, get_topic_names(members)] end)
     |> Enum.map(fn [consumer_group, topics] ->
       [consumer_group, get_lag_for_consumer(consumer_group, topics)]
+
+      # credo:disable-for-next-line
+      # TODO: [consumer_group, topic, get_lag_for_consumer(consumer_group, topic)]
     end)
   end
 
