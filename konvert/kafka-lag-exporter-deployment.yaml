@@ -23,7 +23,4 @@ spec:
           name: kafka-lag-exporter
           ports:
             - containerPort: 4000
-          # Remove the command for final part
-          command: [ "/bin/sh", "-c", "--" ]
-          args: [ "while true; do sleep 30; done;" ]
       restartPolicy: Always
