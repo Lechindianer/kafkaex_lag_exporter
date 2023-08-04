@@ -41,7 +41,8 @@ defmodule KafkaexLagExporter.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:brod,
        git: "https://github.com/kafka4beam/brod", ref: "0582dbbe1a619f8356caeb7a4c03e92650ac69ac"},
-      {:prom_ex, "~> 1.8.0"}
+      {:prom_ex, "~> 1.8.0"},
+      {:telemetry, "~> 1.2"}
     ]
   end
 end
