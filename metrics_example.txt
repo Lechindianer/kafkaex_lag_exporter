@@ -1,0 +1,95 @@
+# HELP kafka_consumergroup_group_lag_seconds Group time lag of a partition
+# TYPE kafka_consumergroup_group_lag_seconds gauge
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+
+
+# HELP kafka_consumergroup_group_max_lag Max group offset lag
+# TYPE kafka_consumergroup_group_max_lag gauge
+kafka_consumergroup_group_max_lag{cluster_name="redpanda",group="owlshop-order-service",} 0.0
+kafka_consumergroup_group_max_lag{cluster_name="redpanda",group="owlshop-address-service",} 0.0
+
+
+# HELP kafka_partition_earliest_offset Earliest offset of a partition
+# TYPE kafka_partition_earliest_offset gauge
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="5",} 0.0
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="4",} 0.0
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="3",} 0.0
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="2",} 0.0
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="1",} 0.0
+kafka_partition_earliest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="0",} 0.0
+
+
+# HELP kafka_consumergroup_group_sum_lag Sum of group offset lag
+# TYPE kafka_consumergroup_group_sum_lag gauge
+kafka_consumergroup_group_sum_lag{cluster_name="redpanda",group="owlshop-order-service",} 0.0
+kafka_consumergroup_group_sum_lag{cluster_name="redpanda",group="owlshop-address-service",} 0.0
+
+
+# HELP kafka_consumergroup_group_max_lag_seconds Max group time lag
+# TYPE kafka_consumergroup_group_max_lag_seconds gauge
+kafka_consumergroup_group_max_lag_seconds{cluster_name="redpanda",group="owlshop-order-service",} 0.0
+kafka_consumergroup_group_max_lag_seconds{cluster_name="redpanda",group="owlshop-address-service",} 0.0
+
+
+# HELP kafka_consumergroup_group_lag Group offset lag of a partition
+# TYPE kafka_consumergroup_group_lag gauge
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 0.0
+kafka_consumergroup_group_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 0.0
+
+
+# HELP kafka_partition_latest_offset Latest offset of a partition
+# TYPE kafka_partition_latest_offset gauge
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="5",} 71.0
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="4",} 100.0
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="3",} 94.0
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="2",} 87.0
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="1",} 88.0
+kafka_partition_latest_offset{cluster_name="redpanda",topic="owlshop-customers",partition="0",} 72.0
+
+
+# HELP kafka_consumergroup_group_offset Last group consumed offset of a partition
+# TYPE kafka_consumergroup_group_offset gauge
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 94.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 72.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 87.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 88.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 100.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="3",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 94.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="0",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 72.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 71.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="4",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 100.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="1",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 88.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",partition="2",member_host="10.244.2.14",consumer_id="owlshop-address-service-66bb67b6-4889-4d1d-a5af-b251981ac96a",client_id="owlshop-address-service",} 87.0
+kafka_consumergroup_group_offset{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",partition="5",member_host="10.244.2.14",consumer_id="owlshop-order-service-7a5415aa-a43d-45ac-8327-bca94a5e49e4",client_id="owlshop-order-service",} 71.0
+
+
+# HELP kafka_consumergroup_group_topic_sum_lag Sum of group offset lag across topic partitions
+# TYPE kafka_consumergroup_group_topic_sum_lag gauge
+kafka_consumergroup_group_topic_sum_lag{cluster_name="redpanda",group="owlshop-address-service",topic="owlshop-customers",} 0.0
+kafka_consumergroup_group_topic_sum_lag{cluster_name="redpanda",group="owlshop-order-service",topic="owlshop-customers",} 0.0
+
+
+# HELP kafka_consumergroup_poll_time_ms Group time poll time
+# TYPE kafka_consumergroup_poll_time_ms gauge
+kafka_consumergroup_poll_time_ms{cluster_name="redpanda",} 1009.0
