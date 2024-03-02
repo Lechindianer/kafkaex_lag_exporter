@@ -30,11 +30,20 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
 
     consumer_group_names = get_consumer_group_names(endpoint)
 
-    consumer_lags =
+    topic_names_for_consumer_groups =
       :brod.describe_groups(endpoint, [], consumer_group_names)
-      |> get_consumer_lags
+      |> get_topic_names_for_consumer_groups
 
-    KafkaexLagExporter.Metrics.kafka_metrics(endpoint, consumer_lags)
+    consumer_lags =
+      topic_names_for_consumer_groups
+      |> Enum.map(fn [consumer_group, topics] ->
+        [consumer_group, get_lag_for_consumer(consumer_group, topics)]
+      end)
+
+    consumer_lag_sum = get_lag_for_consumer_sum(consumer_lags)
+
+    KafkaexLagExporter.Metrics.group_lag_per_partition(endpoint, consumer_lags)
+    KafkaexLagExporter.Metrics.group_sum_lag(endpoint, consumer_lag_sum)
 
     Process.send_after(self(), :tick, @interval)
 
@@ -49,21 +58,11 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
     |> Enum.map(fn {_, group_name, "consumer"} -> group_name end)
   end
 
-  defp get_consumer_lags({:ok, group_descriptions}) do
+  defp get_topic_names_for_consumer_groups({:ok, group_descriptions}) do
     group_descriptions
-    |> Enum.map(fn %{group_id: consumer_group, members: members} ->
-      [consumer_group, members]
-    end)
+    |> Enum.map(fn %{group_id: consumer_group, members: members} -> [consumer_group, members] end)
     |> Enum.map(fn [consumer_group, members] -> [consumer_group, get_topic_names(members)] end)
-    |> Enum.map(fn [consumer_group, topics] ->
-      [consumer_group, get_lag_for_consumer(consumer_group, topics)]
-
-      # credo:disable-for-next-line
-      # TODO: [consumer_group, topic, get_lag_for_consumer(consumer_group, topic)]
-    end)
   end
-
-  defp get_consumer_lags({_, _}), do: []
 
   defp get_topic_names(members) do
     Enum.flat_map(members, fn member ->
@@ -71,10 +70,21 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
     end)
   end
 
+  # TODO: test method for multiple topics
   defp get_lag_for_consumer(consumer_group, topics) do
     topics
-    |> Enum.reduce(0, fn topic, acc ->
-      acc + KafkaexLagExporter.KafkaUtils.lag_total(topic, consumer_group, :client1)
+    |> Enum.flat_map(fn topic ->
+      KafkaexLagExporter.KafkaUtils.lag(topic, consumer_group, :client1)
     end)
   end
+
+  # TODO: test method for multiple topics
+  defp get_lag_for_consumer_sum(lags_per_consumer_group) do
+    lags_per_consumer_group
+    |> Enum.map(fn [topic, lag_per_partition] -> [topic, sum_topic_lag(lag_per_partition)] end)
+  end
+
+  defp sum_topic_lag(item, acc \\ 0)
+  defp sum_topic_lag([], acc), do: acc
+  defp sum_topic_lag([h | t], acc), do: sum_topic_lag(t, acc + elem(h, 1))
 end

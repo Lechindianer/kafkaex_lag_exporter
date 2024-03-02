@@ -53,8 +53,13 @@ defmodule KafkaexLagExporter.KafkaUtils do
 
   @spec lag(binary(), binary(), atom()) :: list({non_neg_integer(), integer()})
   def lag(topic, consumer_group, client) do
-    offsets = resolve_offsets(topic, :latest, client)
-    committed_offsets = fetch_committed_offsets(topic, consumer_group, client)
+    offsets =
+      resolve_offsets(topic, :latest, client)
+      |> Enum.sort_by(fn {key, _value} -> key end)
+
+    committed_offsets =
+      fetch_committed_offsets(topic, consumer_group, client)
+      |> Enum.sort_by(fn {key, _value} -> key end)
 
     for {{part, current}, {_part2, committed}} <- Enum.zip(offsets, committed_offsets) do
       {part, current - committed}
