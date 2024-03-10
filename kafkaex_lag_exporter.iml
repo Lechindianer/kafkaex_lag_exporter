@@ -88,6 +88,8 @@
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/octo_fetch" />
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/phoenix_template" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/ssl_verify_fun" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/mox" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/ssl_verify_fun" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="credo" level="project" />

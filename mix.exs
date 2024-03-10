@@ -39,7 +39,8 @@ defmodule KafkaexLagExporter.MixProject do
       {:plug_cowboy, "~> 2.6.1"},
       {:credo, "~> 1.7.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:brod, "~> 3.17.0" },
+      {:mox, "~> 1.1", only: :test},
+      {:brod, "~> 3.17.0"},
       {:prom_ex, "~> 1.8.0"},
       {:telemetry, "~> 1.2"}
     ]
