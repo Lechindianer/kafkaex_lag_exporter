@@ -87,6 +87,7 @@
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/octo_fetch" />
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/octo_fetch" />
       <excludeFolder url="file://$MODULE_DIR$/_build/test/lib/phoenix_template" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/ssl_verify_fun" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="credo" level="project" />
@@ -163,5 +164,7 @@
     <orderEntry type="library" name="brod" level="project" />
     <orderEntry type="library" name="snappyer" level="project" />
     <orderEntry type="library" name="prom_ex" level="project" />
+    <orderEntry type="library" name="nimble_parsec" level="project" />
+    <orderEntry type="library" name="ssl_verify_fun" level="project" />
   </component>
 </module>
