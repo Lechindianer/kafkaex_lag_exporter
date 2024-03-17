@@ -15,7 +15,7 @@ defmodule KafkaexLagExporter.Application do
       {Phoenix.PubSub, name: KafkaexLagExporter.PubSub},
       # Start the Endpoint (http/https)
       KafkaexLagExporterWeb.Endpoint,
-      KafkaexLagExporter.ConsumerOffsetFetcher
+      KafkaexLagExporter.ConsumerOffset
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
