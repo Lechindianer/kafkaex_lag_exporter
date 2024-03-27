@@ -38,7 +38,7 @@ defmodule KafkaexLagExporter.Metrics do
 
   @doc false
   def group_sum_lag({host, _port}, consumer_lags) do
-    Enum.each(consumer_lags, fn [group_name, lag] ->
+    Enum.each(consumer_lags, fn {group_name, lag} ->
       :telemetry.execute(
         [@kafka_event, :consumergroup, :group, :topic, :sum, :lag],
         %{
@@ -55,7 +55,7 @@ defmodule KafkaexLagExporter.Metrics do
 
   @doc false
   def group_lag_per_partition({host, _port}, consumer_lags) do
-    Enum.each(consumer_lags, fn [group_name, lags] ->
+    Enum.each(consumer_lags, fn {group_name, lags} ->
       Enum.each(lags, fn {partition, lag} ->
         :telemetry.execute(
           [@kafka_event, :consumergroup, :group, :lag],
