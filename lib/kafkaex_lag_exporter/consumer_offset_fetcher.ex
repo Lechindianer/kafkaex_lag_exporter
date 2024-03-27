@@ -3,19 +3,24 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
 
   require Logger
 
-  # TODO: change return type
-  @spec get(KafkaexLagExporter.KafkaWrapper.endpoint()) :: {any(), any()}
+  alias KafkaexLagExporter.KafkaUtils
+
+  # TODO fix type
+  @spec get(KafkaexLagExporter.KafkaWrapper.Behaviour.endpoint()) :: %{
+          lags: list(binary),
+          sum: list(binary)
+        }
   def get(endpoint) do
-    consumer_group_names = KafkaexLagExporter.KafkaUtils.get_consumer_group_names(endpoint)
+    consumer_group_names = KafkaUtils.get_consumer_group_names(endpoint)
 
     consumer_lags =
-      KafkaexLagExporter.KafkaUtils.topic_names_for_consumer_groups(
+      KafkaUtils.topic_names_for_consumer_groups(
         endpoint,
         [],
         consumer_group_names
       )
-      |> Enum.map(fn [consumer_group, topics] ->
-        [consumer_group, get_lag_for_consumer(consumer_group, topics)]
+      |> Enum.map(fn {consumer_group, topics} ->
+        {consumer_group, get_lag_for_consumer(consumer_group, topics)}
       end)
 
     consumer_lag_sum = get_lag_for_consumer_sum(consumer_lags)
@@ -26,13 +31,13 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
   defp get_lag_for_consumer(consumer_group, topics) do
     topics
     |> Enum.flat_map(fn topic ->
-      KafkaexLagExporter.KafkaUtils.lag(topic, consumer_group, :client1)
+      KafkaUtils.lag(topic, consumer_group, :client1)
     end)
   end
 
   defp get_lag_for_consumer_sum(lags_per_consumer_group) do
     lags_per_consumer_group
-    |> Enum.map(fn [topic, lag_per_partition] -> [topic, sum_topic_lag(lag_per_partition, 0)] end)
+    |> Enum.map(fn {topic, lag_per_partition} -> {topic, sum_topic_lag(lag_per_partition, 0)} end)
   end
 
   defp sum_topic_lag([], acc), do: acc

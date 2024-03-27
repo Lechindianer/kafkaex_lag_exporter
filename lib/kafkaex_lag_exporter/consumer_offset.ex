@@ -29,10 +29,10 @@ defmodule KafkaexLagExporter.ConsumerOffset do
   def handle_info(:tick, state) do
     [endpoint | _] = state.endpoints
 
-    {consumer_lags, consumer_lag_sum} = KafkaexLagExporter.ConsumerOffsetFetcher.get(endpoint)
+    %{sum: lag_sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get(endpoint)
 
-    KafkaexLagExporter.Metrics.group_lag_per_partition(endpoint, consumer_lags)
-    KafkaexLagExporter.Metrics.group_sum_lag(endpoint, consumer_lag_sum)
+    KafkaexLagExporter.Metrics.group_lag_per_partition(endpoint, lags)
+    KafkaexLagExporter.Metrics.group_sum_lag(endpoint, lag_sum)
 
     Process.send_after(self(), :tick, @interval)
 

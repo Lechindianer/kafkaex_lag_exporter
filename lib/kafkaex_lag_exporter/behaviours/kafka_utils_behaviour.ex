@@ -19,7 +19,7 @@ defmodule KafkaexLagExporter.KafkaUtils.Behaviour do
               {host :: atom, port :: non_neg_integer},
               list(binary),
               list(binary)
-            ) :: list(binary)
+            ) :: list({consumer_group :: binary, topics :: list(binary)})
 
   def connection(client), do: impl().connection(client)
 
