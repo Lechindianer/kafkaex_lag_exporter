@@ -3,6 +3,7 @@ defmodule KafkaexLagExporter.TopicNameParser do
 
   @invalid_topic_characters ~r/[^[:alnum:]\-\._]/
 
+  @spec parse_topic_names(binary) :: list(binary)
   def parse_topic_names(member_assignment) do
     member_assignment
     |> String.chunk(:printable)
