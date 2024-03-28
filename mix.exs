@@ -37,12 +37,13 @@ defmodule KafkaexLagExporter.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.4.0"},
       {:plug_cowboy, "~> 2.6.1"},
+      {:brod, "~> 3.17.0"},
+      {:prom_ex, "~> 1.8.0"},
+      {:telemetry, "~> 1.2"},
       {:credo, "~> 1.7.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:patch, "~> 0.13.0", only: :test},
-      {:brod, "~> 3.17.0"},
-      {:prom_ex, "~> 1.8.0"},
-      {:telemetry, "~> 1.2"}
+      {:mix_test_watch, "~> 1.2.0", only: [:dev, :test], runtime: false}
     ]
   end
 end
