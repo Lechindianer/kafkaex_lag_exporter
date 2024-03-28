@@ -82,25 +82,35 @@ defmodule KafkaexLagExporter.KafkaUtils do
     [{_, groups} | _] = KafkaWrapper.list_all_groups([{host, port}], [])
 
     groups
-    |> Enum.filter(fn {_, _, protocol} -> protocol == "consumer" end)
-    |> Enum.map(fn {_, group_name, "consumer"} -> group_name end)
+    |> Enum.filter(fn {_, _, protocol} -> protocol === "consumer" end)
+    |> Enum.map(fn {_, group_name, _} -> group_name end)
   end
 
   @impl true
-  def topic_names_for_consumer_groups(endpoint, list \\ [], consumer_group_names) do
-    KafkaWrapper.describe_groups(endpoint, list, consumer_group_names)
-    |> get_topic_names_for_consumer_groups
-  end
+  def get_consumer_group_info(endpoint, list \\ [], consumer_group_names) do
+    {:ok, group_descriptions} = KafkaWrapper.describe_groups(endpoint, list, consumer_group_names)
 
-  defp get_topic_names_for_consumer_groups({:ok, group_descriptions}) do
     group_descriptions
-    |> Enum.map(fn %{group_id: consumer_group, members: members} -> [consumer_group, members] end)
-    |> Enum.map(fn [consumer_group, members] -> {consumer_group, get_topic_names(members)} end)
+    |> Enum.flat_map(fn %{group_id: consumer_group, members: members} ->
+      get_member_info(members)
+      |> Enum.map(fn {topic_names, consumer_id, member_host} ->
+        {consumer_group, topic_names, consumer_id, member_host}
+      end)
+    end)
   end
 
-  defp get_topic_names(members) do
-    Enum.flat_map(members, fn member ->
-      KafkaexLagExporter.TopicNameParser.parse_topic_names(member.member_assignment)
+  @spec get_member_info(
+          list(%{client_host: binary, member_assignment: binary, member_id: binary})
+        ) ::
+          list({topic_names :: list(binary), consumer_id :: binary, member_host :: binary})
+  defp get_member_info(members) do
+    Enum.map(members, fn %{
+                           client_host: member_host,
+                           member_assignment: member_assignment,
+                           member_id: consumer_id
+                         } ->
+      topic_names = KafkaexLagExporter.TopicNameParser.parse_topic_names(member_assignment)
+      {topic_names, consumer_id, member_host}
     end)
   end
 end

@@ -15,7 +15,7 @@ defmodule KafkaexLagExporter.KafkaUtils.Behaviour do
 
   @callback get_consumer_group_names({host :: atom, port :: non_neg_integer}) :: list(binary)
 
-  @callback topic_names_for_consumer_groups(
+  @callback get_consumer_group_info(
               {host :: atom, port :: non_neg_integer},
               list(binary),
               list(binary)
@@ -35,8 +35,8 @@ defmodule KafkaexLagExporter.KafkaUtils.Behaviour do
 
   def get_consumer_group_names({host, port}), do: impl().get_consumer_group_names({host, port})
 
-  def topic_names_for_consumer_groups(endpoint, list, consumer_group_names),
-    do: impl().topic_names_for_consumer_groups(endpoint, list, consumer_group_names)
+  def get_consumer_group_info(endpoint, list, consumer_group_names),
+    do: impl().get_consumer_group_info(endpoint, list, consumer_group_names)
 
   defp impl,
     do: Application.get_env(:kafkaex_lag_exporter, :kafka_utils, KafkaexLagExporter.KafkaUtils)
