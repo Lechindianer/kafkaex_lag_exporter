@@ -1,5 +1,5 @@
 defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   use Patch
 
   @test_consumer_group_name1 "test_consumer_1"

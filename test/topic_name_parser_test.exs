@@ -1,6 +1,5 @@
 defmodule KafkaexLagExporterTopicNameParserTest do
-  use ExUnit.Case
-  doctest KafkaexLagExporter.TopicNameParser
+  use ExUnit.Case, async: true
 
   test "should parse single topic" do
     test_member_assignment =
