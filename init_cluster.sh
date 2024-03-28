@@ -2,7 +2,7 @@
 
 kind delete cluster
 
-kind create cluster --config deployment/kind.yaml
+kind create cluster --config kind.yaml
 
 kubectl wait -A --for=condition=ready pod --field-selector=status.phase!=Succeeded --timeout=15m
 
