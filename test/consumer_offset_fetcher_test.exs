@@ -2,6 +2,8 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
   use ExUnit.Case
   use Patch
 
+  alias KafkaexLagExporter.ConsumerOffset
+
   @test_consumer_group_name1 "test_consumer_1"
   @test_consumer_group_name2 "test_consumer_2"
   @test_lags1 [{0, 23}, {1, 42}, {2, 666}]
@@ -9,6 +11,9 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
   @test_topic1 "test_topic_1"
   @test_topic2 "test_topic_2"
   @test_topic3 "test_topic_3"
+  @test_consumer_id1 "test_consumer_id1"
+  @test_consumer_id2 "test_consumer_id2"
+  @test_member_host "127.0.0.1"
 
   setup do
     patch(
@@ -21,11 +26,12 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
 
     patch(
       KafkaexLagExporter.KafkaUtils,
-      :topic_names_for_consumer_groups,
+      :get_consumer_group_info,
       fn _, _, _ ->
         [
-          {@test_consumer_group_name1, [@test_topic1, @test_topic2]},
-          {@test_consumer_group_name2, [@test_topic3]}
+          {@test_consumer_group_name1, [@test_topic1, @test_topic2], @test_consumer_id1,
+           @test_member_host},
+          {@test_consumer_group_name2, [@test_topic3], @test_consumer_id2, @test_member_host}
         ]
       end
     )
@@ -39,15 +45,51 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
     %{sum: sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get(test_endpoint)
 
     assert sum == [
-             {@test_consumer_group_name1, @test_topic1, 731},
-             {@test_consumer_group_name1, @test_topic2, 6},
-             {@test_consumer_group_name2, @test_topic3, 6}
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name1,
+               topic: @test_topic1,
+               lag: {0, 731},
+               consumer_id: @test_consumer_id1,
+               member_host: @test_member_host
+             },
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name1,
+               topic: @test_topic2,
+               lag: {0, 6},
+               consumer_id: @test_consumer_id1,
+               member_host: @test_member_host
+             },
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name2,
+               topic: @test_topic3,
+               lag: {0, 6},
+               consumer_id: @test_consumer_id2,
+               member_host: @test_member_host
+             }
            ]
 
     assert lags == [
-             {@test_consumer_group_name1, @test_topic1, @test_lags1},
-             {@test_consumer_group_name1, @test_topic2, @test_lags2},
-             {@test_consumer_group_name2, @test_topic3, @test_lags2}
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name1,
+               topic: @test_topic1,
+               lag: @test_lags1,
+               consumer_id: @test_consumer_id1,
+               member_host: @test_member_host
+             },
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name1,
+               topic: @test_topic2,
+               lag: @test_lags2,
+               consumer_id: @test_consumer_id1,
+               member_host: @test_member_host
+             },
+             %ConsumerOffset{
+               consumer_group: @test_consumer_group_name2,
+               topic: @test_topic3,
+               lag: @test_lags2,
+               consumer_id: @test_consumer_id2,
+               member_host: @test_member_host
+             }
            ]
   end
 

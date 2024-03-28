@@ -1,41 +1,17 @@
 defmodule KafkaexLagExporter.ConsumerOffset do
-  @moduledoc "Genserver implementation to set offset metrics for consumer groups"
+  @moduledoc "Struct holding all relevant telemetry information of consumers"
 
-  use GenServer
+  @type t :: %__MODULE__{
+          consumer_group: binary,
+          topic: binary,
+          lag: list({partition :: non_neg_integer, lag :: non_neg_integer}),
+          consumer_id: binary,
+          member_host: binary
+        }
 
-  require Logger
-
-  @interval 5_000
-
-  def start_link(default) when is_list(default) do
-    GenServer.start_link(__MODULE__, default, name: __MODULE__)
-  end
-
-  @impl true
-  def init(_) do
-    Logger.info("Starting #{__MODULE__}")
-
-    clients = Application.get_env(:brod, :clients)
-    endpoints = clients[:kafka_client][:endpoints] || [{"redpanda", 29_092}]
-
-    Logger.info("Reveived Kafka endpoints: #{inspect(endpoints)}")
-
-    Process.send_after(self(), :tick, @interval)
-
-    {:ok, %{endpoints: endpoints}}
-  end
-
-  @impl true
-  def handle_info(:tick, state) do
-    [endpoint | _] = state.endpoints
-
-    %{sum: lag_sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get(endpoint)
-
-    KafkaexLagExporter.Metrics.group_lag_per_partition(endpoint, lags)
-    KafkaexLagExporter.Metrics.group_sum_lag(endpoint, lag_sum)
-
-    Process.send_after(self(), :tick, @interval)
-
-    {:noreply, state}
-  end
+  defstruct consumer_group: "",
+            topic: "",
+            lag: [],
+            consumer_id: "",
+            member_host: ""
 end

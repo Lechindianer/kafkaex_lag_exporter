@@ -3,6 +3,8 @@ defmodule KafkaexLagExporter.Metrics do
 
   use PromEx.Plugin
 
+  alias KafkaexLagExporter.ConsumerOffset
+
   require Logger
 
   @kafka_event :kafka
@@ -21,52 +23,52 @@ defmodule KafkaexLagExporter.Metrics do
           event_name: [@kafka_event, :consumergroup, :group, :topic, :sum, :lag],
           description: "Sum of group offset lag across topic partitions",
           measurement: :lag,
-          # TODO: add more tags like member_host, consumer_id, client_id, ...
-          tags: [:cluster_name, :group, :topic]
+          tags: [:cluster_name, :group, :topic, :consumer_id, :member_host]
         ),
         last_value(
           [@kafka_event, :consumergroup, :group, :lag],
           event_name: [@kafka_event, :consumergroup, :group, :lag],
           description: "Group offset lag of a partition",
           measurement: :lag,
-          # TODO: add more tags like member_host, consumer_id, client_id, ...
-          tags: [:cluster_name, :group, :partition, :topic]
+          tags: [:cluster_name, :group, :partition, :topic, :consumer_id, :member_host]
         )
       ]
     )
   end
 
   @doc false
-  def group_sum_lag({host, _port}, consumer_lags) do
-    Enum.each(consumer_lags, fn {group_name, lag} ->
+  def group_sum_lag({host, _port}, cunsumer_offsets) do
+    Enum.each(cunsumer_offsets, fn %ConsumerOffset{} = consumer_offset ->
+      lag = elem(consumer_offset.lag, 1)
+
       :telemetry.execute(
         [@kafka_event, :consumergroup, :group, :topic, :sum, :lag],
-        %{
-          lag: lag
-        },
+        %{lag: lag},
         %{
           cluster_name: host,
-          group: group_name,
-          topic: []
+          group: consumer_offset.consumer_group,
+          topic: consumer_offset.topic,
+          consumer_id: consumer_offset.consumer_id,
+          member_host: consumer_offset.member_host
         }
       )
     end)
   end
 
   @doc false
-  def group_lag_per_partition({host, _port}, consumer_lags) do
-    Enum.each(consumer_lags, fn {group_name, lags} ->
-      Enum.each(lags, fn {partition, lag} ->
+  def group_lag_per_partition({host, _port}, consumer_offsets) do
+    Enum.each(consumer_offsets, fn %ConsumerOffset{} = consumer_offset ->
+      Enum.each(consumer_offset.lag, fn {partition, lag} ->
         :telemetry.execute(
           [@kafka_event, :consumergroup, :group, :lag],
-          %{
-            lag: lag
-          },
+          %{lag: lag},
           %{
             cluster_name: host,
-            group: group_name,
+            group: consumer_offset.consumer_group,
             partition: partition,
-            topic: []
+            topic: consumer_offset.topic,
+            consumer_id: consumer_offset.consumer_id,
+            member_host: consumer_offset.member_host
           }
         )
       end)
