@@ -4,10 +4,9 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher do
   alias KafkaexLagExporter.ConsumerOffset
   alias KafkaexLagExporter.KafkaUtils
 
-  # TODO fix type
   @spec get(KafkaexLagExporter.KafkaWrapper.Behaviour.endpoint()) :: %{
-          lags: list(binary),
-          sum: list(binary)
+          lags: list(ConsumerOffset.t()),
+          sum: list(ConsumerOffset.t())
         }
   def get(endpoint) do
     consumer_group_names = KafkaUtils.get_consumer_group_names(endpoint)

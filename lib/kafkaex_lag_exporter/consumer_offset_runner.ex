@@ -29,7 +29,7 @@ defmodule KafkaexLagExporter.ConsumerOffsetRunner do
   def handle_info(:tick, state) do
     [endpoint | _] = state.endpoints
 
-    %{sum: lag_sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get(endpoint)
+    %{lags: lags, sum: lag_sum} = KafkaexLagExporter.ConsumerOffsetFetcher.get(endpoint)
 
     KafkaexLagExporter.Metrics.group_lag_per_partition(endpoint, lags)
     KafkaexLagExporter.Metrics.group_sum_lag(endpoint, lag_sum)

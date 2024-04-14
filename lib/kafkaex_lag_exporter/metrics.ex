@@ -36,9 +36,13 @@ defmodule KafkaexLagExporter.Metrics do
     )
   end
 
+  @spec group_sum_lag(
+          KafkaexLagExporter.KafkaWrapper.Behaviour.endpoint(),
+          list(ConsumerOffset.t())
+        ) :: :ok
   @doc false
-  def group_sum_lag({host, _port}, cunsumer_offsets) do
-    Enum.each(cunsumer_offsets, fn %ConsumerOffset{} = consumer_offset ->
+  def group_sum_lag({host, _port}, consumer_offsets) do
+    Enum.each(consumer_offsets, fn %ConsumerOffset{} = consumer_offset ->
       lag = elem(consumer_offset.lag, 1)
 
       :telemetry.execute(
@@ -55,6 +59,10 @@ defmodule KafkaexLagExporter.Metrics do
     end)
   end
 
+  @spec group_lag_per_partition(
+          KafkaexLagExporter.KafkaWrapper.Behaviour.endpoint(),
+          list(ConsumerOffset.t())
+        ) :: :ok
   @doc false
   def group_lag_per_partition({host, _port}, consumer_offsets) do
     Enum.each(consumer_offsets, fn %ConsumerOffset{} = consumer_offset ->
