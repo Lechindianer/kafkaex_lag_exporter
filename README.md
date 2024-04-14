@@ -2,10 +2,26 @@
 
 This project will collect Kafka consumer lag and provide them via Prometheus.
 
+## Metrics
+
+[Prometheus](https://prometheus.io/) is a standard way to represent metrics in a modern cross-platform manner. KafkaexLagExporter exposes several metrics as an HTTP endpoint that can be readily scraped by Prometheus.
+
+**`kafka_consumergroup_group_topic_sum_lag`**
+
+Labels: `cluster_name, group, topic, consumer_id, member_host`
+
+The sum of the difference between the last produced offset and the last consumed offset of all partitions in this topic for this group.
+
+**`kafka_consumergroup_group_lag`**
+
+Labels: `cluster_name, group, partition, topic, member_host, consumer_id`
+
+The difference between the last produced offset and the last consumed offset for this partition in this topic partition for this group.
+
 ## Start
 
 ```bash
-docker run -ti --net="host" -e KAFKA_BROKERS=localhost:9093,localhost:9094,localhost:9095 lechindianer/kafkaex_lag_exporter:0.1
+docker run -ti --net="host" -e KAFKA_BROKERS=localhost:9093,localhost:9094,localhost:9095 lechindianer/kafkaex_lag_exporter:0.2.0
 ```
 
 Now you can check the exposed metrics at [localhost:4000](localhost:4000).
@@ -30,12 +46,25 @@ Kowl is served at [localhost:8080](localhost:8080).
 ### Tests
 
 ```bash
-MIX_ENV=test mix test --no-start 
+MIX_ENV=test mix test --no-start
+```
 
-# Don't forget to check credo for code violations:
+###  Code style
+
+Don't forget to check [credo](https://hexdocs.pm/credo/overview.html) for code violations:
+
+```bash
 mix credo
+```
+
+This project also leverages the use of typespecs in order to provide static code checking:
+
+```bash
+mix dialyzer
 ```
 
 ## Links
 
 Source is on [Gitlab](https://gitlab.com/lechindianer/kafkaex-lag-exporter).
+
+The initial project [Kafka Lag Exporter](https://github.com/seglo/kafka-lag-exporter) was a huge inspiration for me creating my first real Elixir project. Thank you!
