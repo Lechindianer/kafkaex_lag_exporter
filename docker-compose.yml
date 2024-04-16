@@ -107,6 +107,8 @@ services:
       - '4000:4000'
     environment:
       - KAFKA_BROKERS=redpanda:29092
+    networks:
+      - redpanda_network
     depends_on:
       - redpanda
     restart: "unless-stopped"
