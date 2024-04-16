@@ -1,4 +1,2 @@
 elixir 1.16.2-otp-26
 erlang 26.0.2
-tilt 0.33.11
-kind 0.22.0

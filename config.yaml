@@ -1,8 +1,0 @@
-kafka:
-  brokers:
-    - kafka1:9092
-    - kafka2:9092
-    - kafka3:9092
-
-# server:
-  # listenPort: 8080
