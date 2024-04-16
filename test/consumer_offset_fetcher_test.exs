@@ -40,9 +40,7 @@ defmodule KafkaexLagExporter.ConsumerOffsetFetcher.Test do
   end
 
   test "should return the calculated lags" do
-    test_endpoint = {"test endpoint", 666}
-
-    %{sum: sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get(test_endpoint)
+    %{sum: sum, lags: lags} = KafkaexLagExporter.ConsumerOffsetFetcher.get({"test endpoint", 666})
 
     assert sum == [
              %ConsumerOffset{

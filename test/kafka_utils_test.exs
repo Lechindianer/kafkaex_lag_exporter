@@ -5,9 +5,7 @@ defmodule KafkaexLagExporter.KafkaUtils.Test do
   alias KafkaexLagExporter.KafkaWrapper.Behaviour, as: KafkaWrapper
   alias KafkaexLagExporter.KafkaUtils
 
-  @test_host "test_host"
-  @test_port "1234"
-  @test_endpoint {@test_host, @test_port}
+  @test_endpoint {"test_host", "1234"}
   @test_sock_opts [ssl: []]
   @test_group_name1 "test-consumer_group1"
   @test_group_name2 "test-consumer_group"
@@ -28,18 +26,9 @@ defmodule KafkaexLagExporter.KafkaUtils.Test do
       consumer_info1 = {:a, @test_group_name1, "consumer"}
       consumer_info2 = {:b, @test_group_name2, "something-other"}
 
-      patch(
-        KafkaWrapper,
-        :list_all_groups,
-        fn _, _ ->
-          [
-            {
-              @test_endpoint,
-              [consumer_info1, consumer_info2]
-            }
-          ]
-        end
-      )
+      patch(KafkaWrapper, :list_all_groups, fn _, _ ->
+        [{@test_endpoint, [consumer_info1, consumer_info2]}]
+      end)
 
       group_names = KafkaUtils.get_consumer_group_names(@test_endpoint)
 
@@ -63,27 +52,23 @@ defmodule KafkaexLagExporter.KafkaUtils.Test do
       consumer_id = "test_consumer_id"
       member_host = "test_member_host"
 
-      patch(
-        KafkaWrapper,
-        :describe_groups,
-        fn _, _, _ ->
-          {
-            :ok,
-            [
-              %{
-                group_id: consumer_group_name,
-                members: [
-                  %{
-                    client_host: member_host,
-                    member_assignment: member_assignment,
-                    member_id: consumer_id
-                  }
-                ]
-              }
-            ]
-          }
-        end
-      )
+      patch(KafkaWrapper, :describe_groups, fn _, _, _ ->
+        {
+          :ok,
+          [
+            %{
+              group_id: consumer_group_name,
+              members: [
+                %{
+                  client_host: member_host,
+                  member_assignment: member_assignment,
+                  member_id: consumer_id
+                }
+              ]
+            }
+          ]
+        }
+      end)
 
       patch(KafkaexLagExporter.TopicNameParser, :parse_topic_names, fn _ -> [@test_topic_name] end)
 
@@ -147,13 +132,9 @@ defmodule KafkaexLagExporter.KafkaUtils.Test do
 
       patch(KafkaWrapper, :resolve_offset, fn _, _, _, _, _ -> {:ok, resolved_offset} end)
 
-      patch(
-        KafkaWrapper,
-        :fetch_committed_offsets,
-        fn _, _, _ ->
-          {:ok, [%{name: "test name", partitions: [partition_info1, partition_info2]}]}
-        end
-      )
+      patch(KafkaWrapper, :fetch_committed_offsets, fn _, _, _ ->
+        {:ok, [%{name: "test name", partitions: [partition_info1, partition_info2]}]}
+      end)
 
       lag = KafkaUtils.lag(@test_topic_name, consumer_group, client)
 
