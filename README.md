@@ -24,11 +24,20 @@ partition for this group.
 ## Start
 
 ```bash
-docker run -ti --net="host" -e KAFKA_BROKERS=localhost:9093,localhost:9094,localhost:9095 -p 4000:4000 \
-  lechindianer/kafkaex_lag_exporter:0.2.0
+docker run -ti --net="host" -e KAFKA_BROKERS=redpanda:29092 -p 4000:4000 lechindianer/kafkaex_lag_exporter:0.2.0
 ```
 
 Now you can check the exposed metrics at [http://localhost:4000](http://localhost:4000).
+
+## Configuration
+
+KafkaExLagExporter uses 5 seconds as default interval to update the lags. If you want to configure it to use another
+value set `KAFKA_EX_INTERVAL_MS`, i.e.
+
+```bash
+docker run -ti --net="host" -e KAFKA_BROKERS=redpanda:29092 -e KAFKA_EX_INTERVAL_MS=10000 -p 4000:4000 \
+  lechindianer/kafkaex_lag_exporter:0.2.0
+```
 
 ## Developing
 
@@ -38,11 +47,11 @@ To start the project locally:
 KAFKA_BROKERS="localhost:9092" iex -S mix 
 ```
 
-There is also a docker-compose file included which will start Kafka, serve Kowl (Web UI for Kafka) and start
+There is also a Docker compose file included which will start Kafka, serve Kowl (Web UI for Kafka) and start
 KafkaexLagExporter:
 
 ```bash 
-docker-compose up --build
+docker compose up --build
 ```
 
 Kowl is served at [http://localhost:8080](http://localhost:8080).

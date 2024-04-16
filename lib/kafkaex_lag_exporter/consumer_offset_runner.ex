@@ -17,7 +17,7 @@ defmodule KafkaexLagExporter.ConsumerOffsetRunner do
     endpoints = clients[:kafka_client][:endpoints] || [{"redpanda", 29_092}]
 
     interval =
-      System.get_env("KAFKA_EX_INTERVAL", "5000")
+      System.get_env("KAFKA_EX_INTERVAL_MS", "5000")
       |> String.to_integer()
 
     Logger.info("Reveived Kafka endpoints: #{inspect(endpoints)}")
