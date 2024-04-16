@@ -63,7 +63,6 @@ services:
     image: quay.io/cloudhut/owl-shop:latest
     networks:
       - redpanda_network
-    #platform: 'linux/amd64'
     environment:
       - SHOP_KAFKA_BROKERS=redpanda:29092
       - SHOP_KAFKA_TOPICREPLICATIONFACTOR=1
@@ -78,7 +77,6 @@ services:
     container_name: connect
     networks:
       - redpanda_network
-    #platform: 'linux/amd64'
     depends_on:
       - redpanda
     ports:
