@@ -32,7 +32,7 @@ services:
       - redpanda_network
 
   console:
-    image: docker.redpanda.com/redpandadata/console:v2.2.4
+    image: docker.redpanda.com/redpandadata/console:v2.4.6
     entrypoint: /bin/sh
     command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
     environment:
